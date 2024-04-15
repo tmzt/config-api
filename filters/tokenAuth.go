@@ -152,7 +152,7 @@ func (f TokenAuthorizationFilter) handleSpecialToken(req *restful.Request, resp 
 	sub := common.Subject
 
 	isCheckoutToken := strings.HasPrefix(sub, fmt.Sprintf("account:%s:checkout_token:", accountId)) && common.CheckoutTransactionId != nil
-	isDemoToken := sub == fmt.Sprintf("appsub:demo:token:account_id:%s", accountId)
+	isDemoToken := sub == fmt.Sprintf("config_api:demo:token:account_id:%s", accountId)
 
 	f.logger.Printf("IsCheckoutToken: %v\n", isCheckoutToken)
 	f.logger.Printf("IsDemoToken: %v\n", isDemoToken)

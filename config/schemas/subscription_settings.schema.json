@@ -1,5 +1,5 @@
 {
-    "$id": "https://appsub.io/schemas/config/keyed/subscription_settings.schema.json",
+    "$id": "https://config_api.io/schemas/config/keyed/subscription_settings.schema.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
     "description": "Configure your pricing options.",
@@ -117,7 +117,7 @@
             "type": "array",
             "description": "Alternate pricing options for the subscription plan.",
             "items": {
-                "$type": "https://beta.appsub.io/schemas/config/keyed/price_adjustment.schema.json"
+                "$type": "https://beta.config_api.io/schemas/config/keyed/price_adjustment.schema.json"
             }
         }
     }

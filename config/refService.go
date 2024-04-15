@@ -52,7 +52,7 @@ func configRefCacheKey(scope util.ScopeKind, accountId util.AccountId, userId ut
 	if scope != util.ScopeKindUser {
 		userVal = ""
 	}
-	return fmt.Sprintf("appsub:config_ref:scope=%s:account_id=%s:user_id=%s:config_ref_kind=%s", scope, accountId, userVal, kind)
+	return fmt.Sprintf("config_api:config_ref:scope=%s:account_id=%s:user_id=%s:config_ref_kind=%s", scope, accountId, userVal, kind)
 }
 
 func (s *ConfigReferenceService) GetConfigReference(ctx context.Context, tx *gorm.DB, scope util.ScopeKind, accountId util.AccountId, userId util.UserId, kind ConfigReferenceKind) (*configRefCache, error) {

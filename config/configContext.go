@@ -251,7 +251,7 @@ func configContextCacheKey(scope util.ScopeKind, accountId util.AccountId, userI
 	if scope == util.ScopeKindUser {
 		userIdStr = string(userId)
 	}
-	return fmt.Sprintf("appsub:config_context:scope=%s:account_id=%s:user_id=%s", scope, accountId, userIdStr)
+	return fmt.Sprintf("config_api:config_context:scope=%s:account_id=%s:user_id=%s", scope, accountId, userIdStr)
 }
 
 func (c configContext) CacheKey() string {

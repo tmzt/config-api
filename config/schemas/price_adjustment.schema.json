@@ -1,5 +1,5 @@
 {
-    "$id": "https://appsub.io/schemas/config/keyed/price_adjustment.schema.json",
+    "$id": "https://config_api.io/schemas/config/keyed/price_adjustment.schema.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
     "description": "Configure your pricing options, as an adjustment to the standard price.",

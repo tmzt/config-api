@@ -2,7 +2,7 @@ package models
 
 import "time"
 
-// AppSub Platform Account Data, used to store platform specific data
+// config_api Platform Account Data, used to store platform specific data
 // as an extension to the shared Account model
 type PlatformAccountDataORM struct {
 	AccountId string     `json:"account_id"`

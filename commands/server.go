@@ -53,7 +53,13 @@ func (s *Server) Run(c *cli.Context) error {
 	accountResource := resources.NewAccountResource(s.db, platformPermissions, accountPermissions, jwtSvc)
 	accountResource.MustEnsurePlatform()
 
+	userResource := resources.NewUserResource(s.db, accountPermissions)
+
+	authResource := resources.NewAuthResource(s.rdb, s.db, userResource, platformPermissions, accountPermissions, jwtSvc)
+
 	configService := config.NewConfigService(s.db, s.rdb, cacheService)
+
+	authRoute := routes.NewAuthRoute(authResource)
 
 	// Account hierarchy routes
 	accountRoute := routes.NewAccountRoute(
@@ -62,6 +68,8 @@ func (s *Server) Run(c *cli.Context) error {
 		},
 	)
 
+	// Register routes
+	authRoute.Register(container)
 	accountRoute.RegisterAccountRoute("/accounts/{accountId}", false, container)
 
 	// Answer health checks immediately
@@ -82,10 +90,7 @@ func (s *Server) Run(c *cli.Context) error {
 			log.Printf("checking domain: %s", origin)
 
 			// Allow localhost for development
-			if strings.HasPrefix(origin, "http://localhost") {
-				return true
-			}
-			return false
+			return strings.HasPrefix(origin, "http://localhost")
 		},
 		CookiesAllowed: true,
 		Container:      container}

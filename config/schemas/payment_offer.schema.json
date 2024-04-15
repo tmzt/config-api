@@ -1,5 +1,5 @@
 {
-    "$id": "https://appsub.io/schemas/config/keyed/payment_offer.schema.json",
+    "$id": "https://config_api.io/schemas/config/keyed/payment_offer.schema.json",
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
     "title": "Payment Offer Configuration",

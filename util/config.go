@@ -72,73 +72,10 @@ func MustGetRootTokenMaxAge() time.Duration {
 	return time.Duration(0)
 }
 
-func MustGetStripeConnectClientId() string {
-	v := os.Getenv("STRIPE_CONNECT_CLIENT_ID")
+func MustGetRootTokenAudience() string {
+	v := os.Getenv("ROOT_JWT_TOKEN_AUDIENCE")
 	if v == "" {
-		log.Fatalf("STRIPE_CONNECT_CLIENT_ID is required")
-	}
-
-	return v
-}
-
-func MustGetStripeConnectClientSecret() string {
-	v := os.Getenv("STRIPE_CONNECT_CLIENT_SECRET")
-	if v == "" {
-		log.Fatalf("STRIPE_CONNECT_CLIENT_SECRET is required")
-	}
-
-	return v
-}
-
-func MustGetStripeConnectCallbackUrl() string {
-	v := os.Getenv("STRIPE_CONNECT_CALLBACK_URL")
-	if v == "" {
-		log.Fatalf("STRIPE_CONNECT_CALLBACK_URL is required")
-	}
-
-	return v
-}
-
-func MustGetStripeConnectWebhookSecret() string {
-	v := os.Getenv("STRIPE_CONNECT_WEBHOOK_SECRET")
-	if v == "" {
-		log.Fatalf("STRIPE_CONNECT_WEBHOOK_SECRET is required")
-	}
-
-	return v
-}
-
-func MustGetStripeCheckoutClientId() string {
-	v := os.Getenv("STRIPE_CHECKOUT_CLIENT_ID")
-	if v == "" {
-		log.Fatalf("STRIPE_CHECKOUT_CLIENT_ID is required")
-	}
-
-	return v
-}
-
-func MustGetStripeApiSecretKey() string {
-	v := os.Getenv("STRIPE_API_SECRET_KEY")
-	if v == "" {
-		log.Fatalf("STRIPE_API_SECRET_KEY is required")
-	}
-
-	return v
-}
-
-func MustGetStripeCheckoutCallbackUrl() string {
-	v := os.Getenv("STRIPE_CHECKOUT_CALLBACK_URL")
-	if v == "" {
-		log.Fatalf("STRIPE_CHECKOUT_CALLBACK_URL is required")
-	}
-
-	return v
-}
-
-func MustGetStripeCheckoutWebhookSecret() string {
-	v := os.Getenv("STRIPE_CHECKOUT_WEBHOOK_SECRET")
-	if v == "" {
-		log.Fatalf("STRIPE_CHECKOUT_WEBHOOK_SECRET is required")
+		log.Fatalf("ROOT_JWT_TOKEN_AUDIENCE is required")
 	}
 
 	return v
