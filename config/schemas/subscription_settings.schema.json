@@ -1,0 +1,124 @@
+{
+    "$id": "https://appsub.io/schemas/config/keyed/subscription_settings.schema.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "description": "Configure your pricing options.",
+    "definitions": {
+        "billingCycle": {
+            "type": "string",
+            "enum": [
+                "monthly",
+                "yearly"
+            ],
+            "description": "The billing cycle required for the pricing option to be applied."
+        },
+        "standard_pricing_option": {
+            "type": "object",
+            "properties": {
+                "billingCycle": {
+                    "$ref": "#/definitions/billingCycle"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The name of the standard pricing option."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "The description of the standard pricing option."
+                },
+                "price": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "The price of the pricing option"
+                }
+            },
+            "required": [
+                "billingCycle",
+                "price"
+            ]
+        },
+        "price_adjustment": {
+            "type": "object",
+            "properties": {
+                "billingCycle": {
+                    "$ref": "#/definitions/billingCycle"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The name of the pricing adjustment."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "The description of the pricing adjustment."
+                },
+                "adjustmentType": {
+                    "type": "string",
+                    "enum": [
+                        "discountPercentage",
+                        "discountPrice"
+                    ],
+                    "description": "The type of adjustment to be applied."
+                }
+            },
+            "anyOf": [
+                {
+                    "properties": {
+                        "discountPercentage": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 100,
+                            "description": "The discount amount to be applied (if adjustment type is discount percentage)."
+                        }
+                    },
+                    "required": [
+                        "discountPercentage"
+                    ],
+                    "dependencies": {
+                        "adjustmentType": {
+                            "const": "discountPercentage"
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "discountPrice": {
+                            "type": "number",
+                            "minimum": 0,
+                            "description": "The price to be applied (if adjustment type is discount price)."
+                        }
+                    },
+                    "required": [
+                        "discountPrice"
+                    ],
+                    "dependencies": {
+                        "adjustmentType": {
+                            "const": "discountPrice"
+                        }
+                    }
+                }
+            ],
+            "required": [
+                "billingCycle",
+                "adjustmentType"
+            ]
+        }
+    },
+    "properties": {
+        "standard_price": {
+            "type": "object",
+            "description": "The standard pricing option and configured billling cycle for that price. Any other configured discount will be of this price.",
+            "properties": {
+                "standard_pricing_option": {
+                    "$ref": "#/definitions/standard_pricing_option"
+                }
+            }
+        },
+        "alternate_pricing_options": {
+            "type": "array",
+            "description": "Alternate pricing options for the subscription plan.",
+            "items": {
+                "$type": "https://beta.appsub.io/schemas/config/keyed/price_adjustment.schema.json"
+            }
+        }
+    }
+}

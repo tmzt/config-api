@@ -1,0 +1,189 @@
+{
+    "$id": "https://appsub.io/schemas/config/keyed/offer_config.schema.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "description": "Configure your pricing options.",
+    "definitions": {
+        "nodeId": {
+            "type": "string",
+            "description": "The ID of the node."
+        },
+        "billingCycle": {
+            "type": "string",
+            "enum": [
+                "monthly",
+                "yearly"
+            ],
+            "description": "The billing cycle required for the pricing option to be applied."
+        },
+        "offerConfigQuestions": {
+            "type": "object",
+            "properties": {
+                "enablePricingTiers": {
+                    "type": "boolean",
+                    "description": "Enable pricing tiers for this offer."
+                },
+                "enableDiscountsForYearlyBilling": {
+                    "type": "boolean",
+                    "description": "Enable discounts for yearly billing."
+                },
+                "enableSeats": {
+                    "type": "boolean",
+                    "description": "Enable seats for this offer."
+                },
+                "enableAddonBundles": {
+                    "type": "boolean",
+                    "description": "Enable addon bundles for this offer."
+                }
+            }
+        },
+        "offerTierConfig": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "The name of this pricing tier."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "The description of this pricing tier."
+                },
+                "defaultPrice": {
+                    "$ref": "#/definitions/absolutePricingConfig"
+                }
+            }
+        },
+        "absolutePricingConfig": {
+            "type": "object",
+            "properties": {
+                "billingCycle": {
+                    "$ref": "#/definitions/billingCycle"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "The name of the standard pricing option."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "The description of the standard pricing option."
+                },
+                "price": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "The price (per billing cycle) of the pricing option"
+                }
+            },
+            "required": [
+                "billingCycle",
+                "price"
+            ]
+        },
+        "relativePricingConfig": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "The name of the discount pricing option."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "The description of the discount pricing option."
+                },
+                "price": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "The price (per billing cycle) of the pricing option"
+                },
+                "billingCycle": {
+                    "type": "object",
+                    "description": "The billing cycle required for the pricing option to be applied.",
+                    "$ref": "#/definitions/billingCycle"
+                },
+                "discountType": {
+                    "type": "string",
+                    "enum": [
+                        "percentage",
+                        "price"
+                    ],
+                    "description": "The type of discount to be applied."
+                },
+                "discountRelativeTo": {
+                    "type": "object",
+                    "$ref": "#/definitions/nodeId",
+                    "description": "The name of the pricing option to which this price is relative."
+                }
+            },
+            "anyOf": [
+                    {
+                        "properties": {
+                            "discountPercentage": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 100,
+                                "description": "The discount amount to be applied (if adjustment type is discount percentage)."
+                            }
+                        },
+                        "required": ["discountPercentage"],
+                        "dependencies": {
+                            "discountType": {"const": "percentage"}
+                        }
+                    },
+                    {
+                        "properties": {
+                            "discountPrice": {
+                                "type": "number",
+                                "minimum": 0,
+                                "description": "The discount amount to be applied (if adjustment type is discount price)."
+                            }
+                        },
+                        "required": ["discountPrice"],
+                        "dependencies": {
+                            "discountType": {"const": "price"}
+                        }
+                    }
+            ],
+            "required": [
+                "billingCycle",
+                "price",
+                "relativeTo",
+                "relativePrice"
+            ]
+        },
+        "offerTiersConfig": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "description": "The name of this pricing tier set"
+                },
+                "description": {
+                    "type": "string",
+                    "description": "The description of this pricing tier set."
+                },
+                "offerTiers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/offerTierConfig"
+                    }
+                }
+            },
+            "required": [
+                "billingCycle",
+                "price",
+                "minSeats",
+                "maxSeats"
+            ]
+        }
+    },
+    "properties": {
+        "offerConfigQuestions": {
+            "$ref": "#/definitions/offerConfigQuestions"
+        },
+        "tiersConfig": {
+            "$ref": "#/definitions/offerTiersConfig",
+            "dependencies": {
+                "enablePricingTiers": {"const": true}
+            }
+        }
+    }
+}

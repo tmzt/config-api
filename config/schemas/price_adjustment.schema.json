@@ -1,0 +1,78 @@
+{
+    "$id": "https://appsub.io/schemas/config/keyed/price_adjustment.schema.json",
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "description": "Configure your pricing options, as an adjustment to the standard price.",
+    "definitions": {
+        "billingCycle": {
+            "type": "string",
+            "enum": [
+                "monthly",
+                "yearly"
+            ],
+            "description": "The billing cycle required for the pricing option to be applied."
+        }
+    },
+    "properties": {
+        "billingCycle": {
+            "$ref": "#/definitions/billingCycle"
+        },
+        "name": {
+            "type": "string",
+            "description": "The name of the pricing adjustment."
+        },
+        "description": {
+            "type": "string",
+            "description": "The description of the pricing adjustment."
+        },
+        "adjustmentType": {
+            "type": "string",
+            "enum": [
+                "discountPercentage",
+                "discountPrice"
+            ],
+            "description": "The type of adjustment to be applied."
+        }
+    },
+    "anyOf": [
+        {
+            "properties": {
+                "discountPercentage": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100,
+                    "description": "The discount amount to be applied (if adjustment type is discount percentage)."
+                }
+            },
+            "required": [
+                "discountPercentage"
+            ],
+            "dependencies": {
+                "adjustmentType": {
+                    "const": "discountPercentage"
+                }
+            }
+        },
+        {
+            "properties": {
+                "discountPrice": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "The price to be applied (if adjustment type is discount price)."
+                }
+            },
+            "required": [
+                "discountPrice"
+            ],
+            "dependencies": {
+                "adjustmentType": {
+                    "const": "discountPrice"
+                }
+            }
+        }
+    ],
+    "required": [
+        "billingCycle",
+        "adjustmentType"
+    ]
+}

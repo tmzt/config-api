@@ -1,0 +1,129 @@
+package connections
+
+import (
+	"context"
+	"log"
+	"os"
+	"time"
+
+	"github.com/jackc/pgx/v5"
+	"github.com/tmzt/config-api/models"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+)
+
+const enableLogger = true
+const enableNotices = true
+
+func connectDb(dsn string) *pgx.Conn {
+	config, err := pgx.ParseConfig(dsn)
+	if err != nil {
+		log.Fatalf("failed to parse pgx config from URL/DSN: %v\n", err)
+		return nil
+	}
+
+	if enableNotices {
+		config.OnNotice = func(notice *pgx.Notice) {
+			log.Printf(">>>> Postgres notice: %v\n", notice.Message)
+		}
+	}
+
+	conn, err := pgx.ConnectConfig(context.Background(), config)
+	if err != nil {
+		log.Fatalf("failed to connect to database: %v\n", err)
+		return nil
+	}
+
+	return conn
+}
+
+func buildDbLogger() logger.Interface {
+	return logger.New(
+		log.New(os.Stderr, "\r\n", log.LstdFlags), // io writer
+		logger.Config{
+			SlowThreshold: time.Second, // Slow SQL threshold
+			LogLevel:      logger.Info, // Log level
+			Colorful:      true,        // Disable color
+		},
+	)
+}
+
+func buildConfig() *gorm.Config {
+	config := &gorm.Config{}
+
+	if enableLogger {
+		config.Logger = buildDbLogger()
+	}
+
+	return config
+}
+
+func MustNewDB(postgresUrl string) *gorm.DB {
+
+	// dbConn, err := pgx.Connect(pgx.ConnConfig{
+
+	// })
+
+	conn := connectDb(postgresUrl)
+
+	config := buildConfig()
+	dialector := postgres.New(postgres.Config{
+		Conn: conn,
+	})
+
+	// Create a new database connection
+	db, err := gorm.Open(postgres.Dialector{Conn: conn}, config)
+	// db, err := gorm.
+	if err != nil {
+		log.Fatalf("failed to connect to database: %v\n", err)
+	}
+
+	// const enableNotices = true
+	// if enableNotices {
+	// 	// Enable postgres notices
+	// 	sqlDB, err := db.DB()
+	// 	if err == nil {
+	// 		go func() {
+	// 			pq.NewConnectorWithNoticeHandler(sqlDB, func(notice *pq.Error) {
+	// 				// notice := pq.NewNoticeHandler()
+	// 				// sqlDB.SetNoticeReceiver(notice)
+	// 				for n := range notice.Notices {
+	// 					log.Printf("Postgres notice: %v\n", n.Message)
+	// 				}
+	// 			})
+	// 		}()
+	// 	}
+	// }
+
+	return db
+}
+
+func AutoMigrate(db *gorm.DB) {
+	// Migrate the schema
+	err := db.AutoMigrate(
+		&models.AccountORM{},
+		&models.PlatformAccountDataORM{},
+		&models.UserORM{},
+		&models.EmailORM{},
+		&models.AddressORM{},
+		&models.UserAddressORM{},
+		&models.PlatformPermissionsORM{},
+		&models.AccountPermissionsORM{},
+		&models.PlatformSignupORM{},
+		&models.StripeConnectionORM{},
+		// TODO: Move these to their own schema
+		&models.MarketingContactORM{},
+		&models.ProductORM{},
+		&models.ProductConfigORM{},
+		&models.PurchaseItemORM{},
+		&models.PurchaseORM{},
+		&models.CheckoutTransactionORM{},
+		&models.StripeTransactionORM{},
+		&models.StripeEventORM{},
+	)
+
+	if err != nil {
+		log.Fatalf("failed to migrate schema: %v\n", err)
+	}
+}
